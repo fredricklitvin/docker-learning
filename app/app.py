@@ -7,12 +7,12 @@ app = Flask(__name__)
 CORS(app)
 
 # Database connection details
-DB_USER = os.environ.get('DB_USER')
-DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_USER = os.environ.get('POSTGRES_USER')
+DB_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 # This must come from the environment variable set by the configmap
-DB_HOST = os.environ.get('DB_HOST')
-DB_NAME = os.environ.get('DB_NAME')
-DB_PORT = os.environ.get('DB_PORT')
+DB_HOST = os.environ.get('POSTGRES_HOST')
+DB_NAME = os.environ.get('POSTGRES_DB')
+DB_PORT = os.environ.get('POSTGRES_PORT')
 
 def get_conn():
     return psycopg2.connect(
@@ -38,6 +38,7 @@ def setup_database():
 
 @app.before_request
 def init_once():
+    setup_database()
     # Runs once per process (e.g., once per Gunicorn worker)
     try:
         # Basic sanity check for missing env vars
@@ -50,8 +51,6 @@ def init_once():
         }.items() if not v]
         if missing:
             raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
-
-        setup_database()
     except Exception as e:
         # If startup init fails, log it clearly. Requests will still return JSON errors.
         print(f"Startup DB init failed: {e}")
@@ -90,7 +89,7 @@ def add_name():
 
         with get_conn() as conn:
             with conn.cursor() as cur:
-                cur.execute("INSERT INTO public.names (name) VALUES (%s);", (new_name,))
+                cur.execute("INSERT INTO public.names (name) VALUES (%s);", (new_name))
             conn.commit()
         return jsonify({"status": "success", "message": f"Name '{new_name}' added successfully."}), 201
     except Exception as e:
