@@ -1,0 +1,23 @@
+namespace: prod
+backend:
+  replicaCount: 2
+  containerPort: 3000
+
+frontend:
+  replicaCount: 3
+  containerPort: 8080
+
+database:
+  replicaCount: 1
+  dbUser: stronguser
+  dbPassword: strongpassword
+  dbName: postgres
+  dbHost: postgres-service
+  dbPort: 5432
+
+image:
+  name: app
+  tag: latest
+
+pvcCapacity: 10Gi
+pvCapacity: 10Gi

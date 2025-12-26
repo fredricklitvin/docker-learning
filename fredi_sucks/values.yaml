@@ -1,0 +1,23 @@
+namespace: staging
+backend:
+  replicaCount: 1
+  containerPort: 3000
+
+frontend:
+  replicaCount: 1
+  containerPort: 8080
+
+database:
+  replicaCount: 1
+  dbUser: user
+  dbPassword: password
+  dbName: mydatabase
+  dbHost: postgres-service
+  dbPort: 5432
+
+image:
+  name: app
+  tag: latest
+
+pvcCapacity: 10Gi
+pvCapacity: 10Gi

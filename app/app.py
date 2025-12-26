@@ -89,7 +89,7 @@ def add_name():
 
         with get_conn() as conn:
             with conn.cursor() as cur:
-                cur.execute("INSERT INTO public.names (name) VALUES (%s);", (new_name))
+                cur.execute("INSERT INTO public.names (name) VALUES (%s);", (new_name,))
             conn.commit()
         return jsonify({"status": "success", "message": f"Name '{new_name}' added successfully."}), 201
     except Exception as e:

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-{{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.database.replicaCount }}
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13   # <- must match the image tag you built
+          ports:
+            - containerPort: {{ .Values.database.dbPort }}   # change to your app's port
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.database.dbUser }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.dbPassword }}
+            - name: POSTGRES_DB
+              value: {{ .Values.database.dbName }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: {{ .Values.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: postgres
+  ports:
+    - port: {{ .Values.database.dbPort }}        # port inside the cluster
+      targetPort: 5432  # container port
