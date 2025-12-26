@@ -16,7 +16,7 @@ database:
   dbPort: 5432
 
 image:
-  name: app
+  name: us-central1-docker.pkg.dev/brave-inn-477912-q1/fredi-is-useless/app
   tag: latest
 
 pvcCapacity: 10Gi
